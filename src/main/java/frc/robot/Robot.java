@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import java.io.IOException;
+
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -22,6 +27,8 @@ public class Robot extends TimedRobot {
   private final MotorController m_leftMotor = new PWMSparkMax(0);
   private final MotorController m_rightMotor = new PWMSparkMax(1);
 
+  private Trajectory trajectory;
+
   @Override
   public void robotInit() {
     // We need to invert one side of the drivetrain so that positive voltages
@@ -32,6 +39,12 @@ public class Robot extends TimedRobot {
     m_myRobot = new DifferentialDrive(m_leftMotor, m_rightMotor);
     m_leftStick = new Joystick(0);
     m_rightStick = new Joystick(1);
+
+    try {
+      trajectory = TrajectoryUtil.fromPathweaverJson(Filesystem.getDeployDirectory().toPath().resolve("./PathWeaver/pathweaver.json"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
